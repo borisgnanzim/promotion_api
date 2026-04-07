@@ -18,7 +18,14 @@ class UserRoleFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'start_at' => fake()->optional()->date(),
+            'end_at' => fake()->optional()->date(),
+            'is_active' => fake()->boolean(),
+            'assign_by' => null, // or fake user id
+            'update_by' => null,
+            'disabled_at' => fake()->optional()->date(),
+            'user_id' => \App\Models\User::factory(),
+            'role_id' => \App\Models\Role::factory(),
         ];
     }
 }

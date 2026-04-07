@@ -18,7 +18,11 @@ class ImageFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => fake()->sentence(3),
+            'description' => fake()->sentence(),
+            'path' => fake()->imageUrl(),
+            //'item_id' => \App\Models\Item::factory(),
+           // 'item_type' => fake()->optional()->word(),
         ];
     }
 }

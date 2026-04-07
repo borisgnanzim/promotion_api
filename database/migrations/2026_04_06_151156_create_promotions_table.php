@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('promotions', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->decimal('pourcentage',5,2);
+            $table->float('discount');
+            $table->float('max_discount');
+            $table->dateTime('start_at');
+            $table->dateTime('end_at');
+            $table->boolean('is_active');
             $table->timestamps();
         });
     }

@@ -18,7 +18,18 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->word(),
+            'description' => fake()->sentence(),
+            'parent_id' => null, // or fake()->optional()->randomElement(Category::pluck('id'))
         ];
+    }
+
+    public function withParent(Category $parent)
+    {
+        return $this->state(function (array $attributes) use ($parent) {
+            return [
+                'parent_id' => $parent->id,
+            ];
+        });
     }
 }
