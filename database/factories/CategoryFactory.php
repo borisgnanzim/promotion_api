@@ -20,7 +20,7 @@ class CategoryFactory extends Factory
         return [
             'name' => fake()->word(),
             'description' => fake()->sentence(),
-            'parent_id' => null, // or fake()->optional()->randomElement(Category::pluck('id'))
+            'parent_ref' => null, // or fake()->optional()->randomElement(Category::pluck('id'))
         ];
     }
 
@@ -28,7 +28,7 @@ class CategoryFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($parent) {
             return [
-                'parent_id' => $parent->id,
+                'parent_ref' => $parent->ref,
             ];
         });
     }

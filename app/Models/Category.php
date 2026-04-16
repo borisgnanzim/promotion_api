@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 #[Fillable(['name', 'description', 'parent_id'])]
+#[Table(key: 'ref',  keyType: 'string')]
+
 class Category extends Model
 {
     /** @use HasFactory<\Database\Factories\CategoryFactory> */

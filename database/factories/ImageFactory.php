@@ -21,7 +21,7 @@ class ImageFactory extends Factory
             'title' => fake()->sentence(3),
             'description' => fake()->sentence(),
             'path' => fake()->imageUrl(),
-            //'item_id' => \App\Models\Item::factory(),
+            //'item_ref' => \App\Models\Item::factory(),
            // 'item_type' => fake()->optional()->word(),
         ];
     }

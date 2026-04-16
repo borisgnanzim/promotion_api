@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('promotions', function (Blueprint $table) {
             $table->id();
+            $table->uuid('ref')->unique();
             $table->string('title');
             $table->text('description')->nullable();
             $table->decimal('pourcentage',5,2);

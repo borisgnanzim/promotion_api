@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->uuid('ref')->unique();
             $table->string('name');
             $table->string('description')->nullable();
-            $table->string('parent_id')->nullable();
-            $table->foreign('parent_id')->references('id')->on('categories')->onDelete('set null');
+            $table->string('parent_ref')->nullable();
+            $table->foreign('parent_ref')->references('ref')->on('categories')->onDelete('set null');
             $table->timestamps();
         });
     }

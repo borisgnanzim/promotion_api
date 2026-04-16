@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Item;
 use App\Models\Promotion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -27,5 +28,12 @@ class PromotionFactory extends Factory
             'end_at' => fake()->dateTimeBetween('+1 month', '+2 months'),
             'is_active' => fake()->boolean(),
         ];
+    }
+
+    public function withItems( $nbr_item ){
+        
+        return $this->afterCreating( function ($promotion) use ($nbr_item){
+            Item::factory()->withImages()->count($nbr_item)->create(['promotion_ref' => $promotion->ref]);
+        });
     }
 }

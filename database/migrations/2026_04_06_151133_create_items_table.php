@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->uuid('ref')->unique();
             $table->string('name'); 
             $table->text('description')->nullable(); 
             $table->text('mini_description')->nullable(); 
@@ -26,11 +27,12 @@ return new class extends Migration
             $table->string('search_slug')->default(''); 
             $table->string('search_slug_metaphone')->nullable(); 
 
-            $table->string('category_id');
+            $table->string('category_ref');
+            $table->string('promotion_ref');
 
             $table->decimal('promotion_pourcentage',5,2)->nullable(); 
             $table->float('promotion_discount')->nullable();
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('category_ref')->references('ref')->on('categories')->onDelete('cascade');
             $table->timestamps();
         });
     }
