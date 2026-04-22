@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[Fillable(['start_at', 'end_at', 'is_active', 'assign_by', 'update_by', 'disabled_at', 'user_ref', 'role_ref'])]
 #[Table(key: 'ref',  keyType: 'string')]
 
 class UserRole extends Model

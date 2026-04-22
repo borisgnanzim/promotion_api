@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['name', 'description', 'parent_id'])]
+#[Fillable(['name', 'description', 'parent_ref'])]
 #[Table(key: 'ref',  keyType: 'string')]
 
 class Category extends Model
