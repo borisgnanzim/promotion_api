@@ -15,5 +15,9 @@ class Store extends Model
     /** @use HasFactory<\Database\Factories\StoreFactory> */
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'address', 'phone_number'];
+    public function users()
+    {
+        return $this->hasMany(User::class, 'store_ref', 'ref');
+    }
+
 }

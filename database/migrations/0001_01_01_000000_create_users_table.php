@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('last_name')->default('');
             $table->boolean('is_active')->default(true);
             $table->string('phone_number')->unique()->nullable();
+            $table->string('store_ref')->nullable();
+            $table->foreign('store_ref')->references('ref')->on('stores')->onDelete('set null');
             $table->rememberToken();
             $table->timestamps();
         });

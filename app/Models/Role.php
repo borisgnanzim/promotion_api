@@ -15,7 +15,7 @@ class Role extends Model
     /** @use HasFactory<\Database\Factories\RoleFactory> */
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'assignable'];
+    //protected $fillable = ['name', 'description', 'assignable'];
 
     protected function casts(): array
     {

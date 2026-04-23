@@ -15,7 +15,7 @@ class Promotion extends Model
     /** @use HasFactory<\Database\Factories\PromotionFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'pourcentage', 'discount', 'max_discount', 'start_at', 'end_at', 'is_active'];
+    //protected $fillable = ['title', 'description', 'pourcentage', 'discount', 'max_discount', 'start_at', 'end_at', 'is_active'];
 
     protected function casts(): array
     {
@@ -28,4 +28,7 @@ class Promotion extends Model
             'is_active' => 'boolean',
         ];
     }
+
+    
+    
 }

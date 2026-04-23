@@ -15,7 +15,7 @@ class UserRole extends Model
     /** @use HasFactory<\Database\Factories\UserRoleFactory> */
     use HasFactory;
 
-    protected $fillable = ['start_at', 'end_at', 'is_active', 'assign_by', 'update_by', 'disabled_at', 'user_id', 'role_id'];
+    // protected $fillable = ['start_at', 'end_at', 'is_active', 'assign_by', 'update_by', 'disabled_at', 'user_id', 'role_id'];
 
     protected function casts(): array
     {

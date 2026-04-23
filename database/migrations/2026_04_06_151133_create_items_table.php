@@ -33,6 +33,7 @@ return new class extends Migration
             $table->decimal('promotion_pourcentage',5,2)->nullable(); 
             $table->float('promotion_discount')->nullable();
             $table->foreign('category_ref')->references('ref')->on('categories')->onDelete('cascade');
+            $table->foreign('promotion_ref')->references('ref')->on('promotions')->onDelete('set null');
             $table->timestamps();
         });
     }
