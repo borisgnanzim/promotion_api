@@ -4,16 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['title', 'description', 'pourcentage', 'discount', 'max_discount', 'start_at', 'end_at', 'is_active'])]
+#[Fillable(['title', 'description', 'pourcentage', 'discount', 'max_discount', 'start_at', 'end_at', 'is_active','store_ref'])]
 #[Table(key: 'ref',  keyType: 'string')]
 
 class Promotion extends Model
 {
     /** @use HasFactory<\Database\Factories\PromotionFactory> */
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     //protected $fillable = ['title', 'description', 'pourcentage', 'discount', 'max_discount', 'start_at', 'end_at', 'is_active'];
 
@@ -28,7 +29,5 @@ class Promotion extends Model
             'is_active' => 'boolean',
         ];
     }
-
-    
     
 }

@@ -21,6 +21,9 @@ return new class extends Migration
             $table->float('max_discount');
             $table->dateTime('start_at');
             $table->dateTime('end_at');
+            // à checker plus tard
+            $table->string('store_ref');
+            $table->foreign('store_ref')->references('ref')->on('stores')->onDelete('set null');
             $table->boolean('is_active');
             $table->timestamps();
         });

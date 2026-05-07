@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Item;
 use App\Models\Promotion;
+use App\Models\Store;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -27,6 +28,7 @@ class PromotionFactory extends Factory
             'start_at' => fake()->dateTimeBetween('now', '+1 month'),
             'end_at' => fake()->dateTimeBetween('+1 month', '+2 months'),
             'is_active' => fake()->boolean(),
+            'store_ref' => Store::inRandomOrder()->first()->ref,
         ];
     }
 

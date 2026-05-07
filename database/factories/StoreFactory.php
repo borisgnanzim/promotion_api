@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Store;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,5 +24,12 @@ class StoreFactory extends Factory
             'address' => fake()->address(),
             'phone_number' => fake()->phoneNumber(),
         ];
+    }
+
+    public function withSellers($nbr_sellers)
+    {
+        return $this->afterCreating(function ($store) use ($nbr_sellers) {
+            User::factory()->count($nbr_sellers)->create(['store_ref' => $store->ref]);
+        });
     }
 }

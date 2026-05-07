@@ -3,10 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
+use App\Models\Store;
+use App\Models\User;
 use App\Models\UserRole;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use User;
 
 class UserSeeder extends Seeder
 {
@@ -36,6 +37,7 @@ class UserSeeder extends Seeder
             'name' => 'seller',
             'email' => 'seller@example.com',
             'password' => bcrypt('password'),
+            'store_ref' => Store::inRandomOrder()->first()->ref,
         ]);
         $roleSeller = Role::where('name', 'seller')->first();  
         UserRole::create([

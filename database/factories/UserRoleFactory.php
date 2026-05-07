@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
+use App\Models\User;
 use App\Models\UserRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -24,8 +26,8 @@ class UserRoleFactory extends Factory
             'assign_by' => null, // or fake user id
             'update_by' => null,
             'disabled_at' => fake()->optional()->date(),
-            'user_id' => \App\Models\User::factory(),
-            'role_id' => \App\Models\Role::factory(),
+            //'user_ref' => User::factory()->create()->ref,
+            // 'role_ref' => Role::factory()->create()->ref,
         ];
     }
 }

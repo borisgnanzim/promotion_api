@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['ref','first_name', 'last_name', 'email', 'password', 'phone_number', 'is_active'])]
+#[Fillable(['ref','name', 'email', 'password', 'phone_number', 'is_active', 'store_ref'])]
 #[Hidden(['password', 'remember_token'])]
 #[Table(key: 'ref',  keyType: 'string')]
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class Item extends Model
 {
     /** @use HasFactory<\Database\Factories\ItemFactory> */
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     //protected $fillable = ['name', 'description', 'mini_description', 'price', 'stock', 'limit_threshold', 'out_of_stock_threshold', 'status', 'slug', 'search_slug', 'search_slug_metaphone', 'promotion_pourcentage', 'promotion_discount', 'category_id'];
 
