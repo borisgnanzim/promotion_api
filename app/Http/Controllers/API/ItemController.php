@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
+use App\Http\Resources\ItemResource;
 use App\Models\Item;
 use App\Traits\JsonResponseTrait;
 
@@ -17,7 +18,7 @@ class ItemController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(Item::all());
+        return $this->successResponse(ItemResource::collection(Item::all()));
     }
 
     /**
@@ -27,7 +28,7 @@ class ItemController extends Controller
     {
         $item = Item::create($request->validated());
 
-        return $this->successResponse($item, 'Item created.', 201);
+        return $this->successResponse(new ItemResource($item), 'Item created.', 201);
     }
 
     /**
@@ -35,7 +36,7 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
-        return $this->successResponse($item);
+        return $this->successResponse(new ItemResource($item));
     }
 
     /**
@@ -45,7 +46,7 @@ class ItemController extends Controller
     {
         $item->update($request->validated());
 
-        return $this->successResponse($item, 'Item updated.');
+        return $this->successResponse(new ItemResource($item), 'Item updated.');
     }
 
     /**

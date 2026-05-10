@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStoreRequest;
 use App\Http\Requests\UpdateStoreRequest;
+use App\Http\Resources\StoreResource;
 use App\Models\Store;
 use App\Traits\JsonResponseTrait;
 
@@ -17,7 +18,7 @@ class StoreController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(Store::all());
+        return $this->successResponse(StoreResource::collection(Store::all()));
     }
 
     /**
@@ -27,7 +28,7 @@ class StoreController extends Controller
     {
         $store = Store::create($request->validated());
 
-        return $this->successResponse($store, 'Store created.', 201);
+        return $this->successResponse(new StoreResource($store), 'Store created.', 201);
     }
 
     /**
@@ -35,7 +36,7 @@ class StoreController extends Controller
      */
     public function show(Store $store)
     {
-        return $this->successResponse($store);
+        return $this->successResponse(new StoreResource($store));
     }
 
     /**
@@ -45,7 +46,7 @@ class StoreController extends Controller
     {
         $store->update($request->validated());
 
-        return $this->successResponse($store, 'Store updated.');
+        return $this->successResponse(new StoreResource($store), 'Store updated.');
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Traits\JsonResponseTrait;
 
@@ -17,7 +18,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(Category::all());
+        return $this->successResponse(CategoryResource::collection(Category::all()));
     }
 
     /**
@@ -27,7 +28,7 @@ class CategoryController extends Controller
     {
         $category = Category::create($request->validated());
 
-        return $this->successResponse($category, 'Category created.', 201);
+        return $this->successResponse(new CategoryResource($category), 'Category created.', 201);
     }
 
     /**
@@ -35,7 +36,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        return $this->successResponse($category);
+        return $this->successResponse(new CategoryResource($category));
     }
 
     /**
@@ -45,7 +46,7 @@ class CategoryController extends Controller
     {
         $category->update($request->validated());
 
-        return $this->successResponse($category, 'Category updated.');
+        return $this->successResponse(new CategoryResource($category), 'Category updated.');
     }
 
     /**

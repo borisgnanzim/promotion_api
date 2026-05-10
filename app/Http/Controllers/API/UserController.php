@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\JsonResponseTrait;
 
@@ -17,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(User::all());
+        return $this->successResponse(UserResource::collection(User::all()));
     }
 
     /**
@@ -27,7 +28,7 @@ class UserController extends Controller
     {
         $user = User::create($request->validated());
 
-        return $this->successResponse($user, 'User created.', 201);
+        return $this->successResponse(new UserResource($user), 'User created.', 201);
     }
 
     /**
@@ -35,7 +36,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $this->successResponse($user);
+        return $this->successResponse(new UserResource($user));
     }
 
     /**
@@ -45,7 +46,7 @@ class UserController extends Controller
     {
         $user->update($request->validated());
 
-        return $this->successResponse($user, 'User updated.');
+        return $this->successResponse(new UserResource($user), 'User updated.');
     }
 
     /**
