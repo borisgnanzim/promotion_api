@@ -18,6 +18,49 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     use JsonResponseTrait;
+
+    public function login(LoginRequest $request)
+    {
+        $credentials = $request->validated();
+        $user = User::where('email', $credentials['email'])
+                    ->first();
+
+        if (!$user || !Hash::check($credentials['password'], (string) $user->password)) {
+            return $this->errorResponse('Invalid credentials', 401);
+        }
+
+        // Check if the user is active
+        if (!$user->is_active) {
+            return $this->errorResponse('Compte deleted', 404);
+        }
+
+        // find the user roles
+        $roles = $user->roles()->get();
+        if ($roles->isEmpty()) {
+            return $this->errorResponse('User has no roles assigned', 403);
+        }
+        //dd($roles);
+        if($user->hasRole('client')) {
+            $roleName = 'client';
+        } elseif ($user->hasRole('seller')) {
+            $roleName = 'seller';
+        // } elseif ($user->hasRole('admin')) {
+        //     $roleName = 'admin';
+        } else {
+            return $this->errorResponse('Unauthorized', 403);
+        }
+
+        $token = $user->createToken('auth_token', [$roleName])->plainTextToken;
+        $cookie = cookie('auth_token', $token, 1440, null, null, false, true);
+        
+        //$user->notify(new LoginNotification()) ;
+
+        return $this->successResponse([
+            'user' => new UserResource($user),
+            'token' => $token,
+            'role' => $roleName,
+        ], 'User logged in successfully')->cookie($cookie);
+    }
     public function logout(Request $request)
     {
         // Vérifie si l'utilisateur est authentifié
