@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateImageRequest;
 use App\Http\Resources\ImageResource;
 use App\Models\Image;
 use App\Traits\JsonResponseTrait;
+use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
 {
@@ -25,9 +26,20 @@ class ImageController extends Controller
         return $this->successResponse(new ImageResource($image), 'Image created.', 201);
     }
 
-    public function show(Image $image)
+    public function show($ref)
     {
-        return $this->successResponse(new ImageResource($image));
+        $image= Image::where('ref', $ref)->first();
+        if($image == null)
+        {
+            return $this->errorResponse('Image not found', 404);
+        }
+
+        if (Storage::disk('public')->exists( $image->path)) {
+            return response()->file(Storage::disk('public')->path( $image->path));
+        }
+        $filePath = storage_path('/images/placeholders/default.png');
+        //$filePath = "https://picsum.photos/680/480";
+        return response()->file($filePath);
     }
 
     public function update(UpdateImageRequest $request, Image $image)

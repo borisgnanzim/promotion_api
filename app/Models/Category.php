@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Http\Filters\QueryFilter;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,5 +31,10 @@ class Category extends Model
     public function items()
     {
         return $this->hasMany(Item::class, 'category_ref', 'ref');
+    }
+
+    public function scopeFilter(Builder $query, QueryFilter $filter): Builder
+    {
+        return $filter->apply($query);
     }
 }
