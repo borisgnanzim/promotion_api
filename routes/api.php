@@ -25,6 +25,8 @@ Route::prefix('auth')->group(function () {
     });
 
     Route::post('login', [AuthController::class, 'login']);
+    Route::post('otp/request', [AuthController::class, 'requestOtp']);
+    Route::post('otp/verify', [AuthController::class, 'verifyOtp']);
     // login pour admin
     Route::post('admin/login', [AuthController::class, 'loginAdmin']);
 });

@@ -5,10 +5,13 @@ namespace App\Http\Controllers\API\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\RequestOtpRequest;
+use App\Http\Requests\VerifyOtpRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserRole;
+use App\Services\OtpService;
 use Illuminate\Http\Request;
 use App\Traits\JsonResponseTrait;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +20,9 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function __construct(private OtpService $otpService)
+    {
+    }
     use JsonResponseTrait;
 
     public function login(LoginRequest $request)
@@ -100,6 +106,58 @@ class AuthController extends Controller
         $cookie = cookie('auth_token', $token, 60 * 24); // expire in 1 day
 
         return $this->successResponse(['token' => $token], 'Login successful')->withCookie($cookie);
+    }
+
+    public function requestOtp(RequestOtpRequest $request)
+    {
+        $data = $request->validated();
+        $user = $this->otpService->findUserByContact($data);
+
+        if (!$user || !$user->is_active) {
+            return $this->errorResponse('Utilisateur introuvable ou inactif', 404);
+        }
+
+        $channel = isset($data['phone_number']) ? 'sms' : 'mail';
+        $this->otpService->sendOtp($user, $channel);
+
+        return $this->successResponse(['contact' => $data['phone_number'] ?? $data['email']], 'Code OTP envoyé.');
+    }
+
+    public function verifyOtp(VerifyOtpRequest $request)
+    {
+        $data = $request->validated();
+        $contact = $data['phone_number'] ?? $data['email'];
+        $user = $this->otpService->verifyOtp($contact, $data['code']);
+
+        if (!$user) {
+            return $this->errorResponse('Code OTP invalide ou expiré', 422);
+        }
+
+        if (!$user->is_active) {
+            return $this->errorResponse('Utilisateur introuvable ou inactif', 404);
+        }
+
+        $roles = $user->roles()->get();
+        if ($roles->isEmpty()) {
+            return $this->errorResponse('User has no roles assigned', 403);
+        }
+
+        if ($user->hasRole('client')) {
+            $roleName = 'client';
+        } elseif ($user->hasRole('seller')) {
+            $roleName = 'seller';
+        } else {
+            return $this->errorResponse('Unauthorized', 403);
+        }
+
+        $token = $user->createToken('auth_token', [$roleName])->plainTextToken;
+        $cookie = cookie('auth_token', $token, 1440, null, null, false, true);
+
+        return $this->successResponse([
+            'user' => new UserResource($user),
+            'token' => $token,
+            'role' => $roleName,
+        ], 'Connexion par OTP réussie')->cookie($cookie);
     }
 
     // Ajout d'un compte admin par l'admin
