@@ -14,7 +14,11 @@ class UserController extends Controller
     use JsonResponseTrait;
 
     /**
-     * Display a listing of the resource.
+     * List all users
+     *
+     * @group Users
+     * @authenticated
+     * @response 200 {"success": true, "data": [{"id": 1, "ref": "user_123", "email": "user@example.com", "name": "John Doe"}], "message": null}
      */
     public function index()
     {
@@ -22,7 +26,17 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create a new user
+     *
+     * @group Users
+     * @authenticated
+     * @bodyParam name string required The user's full name. Example: John Doe
+     * @bodyParam first_name string required User's first name. Example: John
+     * @bodyParam last_name string required User's last name. Example: Doe
+     * @bodyParam email string required User's email address. Example: user@example.com
+     * @bodyParam password string required User's password. Example: securepass123
+     * @bodyParam phone_number string required User's phone number. Example: +212612345678
+     * @response 201 {"success": true, "data": {"id": 1, "ref": "user_123", "email": "user@example.com", "name": "John Doe"}, "message": "User created."}
      */
     public function store(StoreUserRequest $request)
     {
@@ -32,7 +46,12 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Get a specific user
+     *
+     * @group Users
+     * @authenticated
+     * @urlParam ref string required The user reference. Example: user_123
+     * @response 200 {"success": true, "data": {"id": 1, "ref": "user_123", "email": "user@example.com", "name": "John Doe"}, "message": null}
      */
     public function show(User $user)
     {
@@ -40,7 +59,14 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update a user
+     *
+     * @group Users
+     * @authenticated
+     * @urlParam ref string required The user reference. Example: user_123
+     * @bodyParam name string User's full name. Example: John Doe Updated
+     * @bodyParam phone_number string User's phone number. Example: +212612345678
+     * @response 200 {"success": true, "data": {"id": 1, "ref": "user_123", "name": "John Doe Updated"}, "message": "User updated."}
      */
     public function update(UpdateUserRequest $request, User $user)
     {
@@ -50,7 +76,12 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a user
+     *
+     * @group Users
+     * @authenticated
+     * @urlParam ref string required The user reference. Example: user_123
+     * @response 200 {"success": true, "data": null, "message": "User deleted."}
      */
     public function destroy(User $user)
     {
