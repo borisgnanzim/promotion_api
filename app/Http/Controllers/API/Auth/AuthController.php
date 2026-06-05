@@ -7,23 +7,24 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\RequestOtpRequest;
 use App\Http\Requests\VerifyOtpRequest;
+use App\Http\Requests\VerifyEmailRequest;
 use App\Http\Resources\UserResource;
-use App\Models\Role;
-use App\Models\User;
-use App\Models\UserRole;
+use App\Services\AuthenticationService;
 use App\Services\OtpService;
+use App\Services\TokenService;
 use Illuminate\Http\Request;
 use App\Traits\JsonResponseTrait;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     use JsonResponseTrait;
 
-    public function __construct(private OtpService $otpService)
-    {
+    public function __construct(
+        private AuthenticationService $authenticationService,
+        private OtpService $otpService,
+        private TokenService $tokenService
+    ) {
     }
 
     /**
@@ -40,44 +41,20 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
-        $user = User::where('email', $credentials['email'])
-                    ->first();
+        $authResult = $this->authenticationService->authenticateWithPassword(
+            $credentials['email'],
+            $credentials['password']
+        );
 
-        if (!$user || !Hash::check($credentials['password'], (string) $user->password)) {
+        if (!$authResult) {
             return $this->errorResponse('Invalid credentials', 401);
         }
 
-        // Check if the user is active
-        if (!$user->is_active) {
-            return $this->errorResponse('Compte deleted', 404);
-        }
-
-        // find the user roles
-        $roles = $user->roles()->get();
-        if ($roles->isEmpty()) {
-            return $this->errorResponse('User has no roles assigned', 403);
-        }
-        //dd($roles);
-        if($user->hasRole('client')) {
-            $roleName = 'client';
-        } elseif ($user->hasRole('seller')) {
-            $roleName = 'seller';
-        // } elseif ($user->hasRole('admin')) {
-        //     $roleName = 'admin';
-        } else {
-            return $this->errorResponse('Unauthorized', 403);
-        }
-
-        $token = $user->createToken('auth_token', [$roleName])->plainTextToken;
-        $cookie = cookie('auth_token', $token, 1440, null, null, false, true);
-        
-        //$user->notify(new LoginNotification()) ;
-
         return $this->successResponse([
-            'user' => new UserResource($user),
-            'token' => $token,
-            'role' => $roleName,
-        ], 'User logged in successfully')->cookie($cookie);
+            'user' => new UserResource($authResult['user']),
+            'token' => $authResult['token'],
+            'role' => $authResult['role'],
+        ], 'User logged in successfully')->cookie($authResult['cookie']);
     }
 
     /**
@@ -90,22 +67,19 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        // Vérifie si l'utilisateur est authentifié
         if (!$request->user()) {
             return $this->errorResponse('Unauthorized', 401);
         }
-        // Vérifie si l'utilisateur a un token actif
+
         if (!$request->user()->currentAccessToken()) {
             return $this->errorResponse('No active token found', 401);
         }
-        // supprime tous les tokens de l'utilisateur
+
         $request->user()->tokens()->delete();
-        
-        //$request->user()->currentAccessToken()->delete();
 
-        $cookie = Cookie::forget('auth_token');
-
-        return $this->successResponse('', 'Logged out successfully')->withCookie($cookie);
+        return $this->successResponse('', 'Logged out successfully')->withCookie(
+            $this->tokenService->forgetToken()
+        );
     }
 
     /**
@@ -121,23 +95,24 @@ class AuthController extends Controller
      */
     public function loginAdmin(LoginRequest $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->validated();
+        $authResult = $this->authenticationService->authenticateWithPassword(
+            $credentials['email'],
+            $credentials['password']
+        );
 
-        if (!Auth::attempt($credentials)) {
+        if (!$authResult) {
             return $this->errorResponse('Invalid credentials', 401);
         }
 
-        $user = Auth::user();
-
-        if (!$user->hasRole('admin')) {
+        if ($authResult['role'] !== 'admin') {
             return $this->errorResponse('Unauthorized', 403);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        $cookie = cookie('auth_token', $token, 60 * 24); // expire in 1 day
-
-        return $this->successResponse(['token' => $token], 'Login successful')->withCookie($cookie);
+        return $this->successResponse(
+            ['token' => $authResult['token']],
+            'Login successful'
+        )->withCookie($authResult['cookie']);
     }
 
     /**
@@ -153,16 +128,19 @@ class AuthController extends Controller
     public function requestOtp(RequestOtpRequest $request)
     {
         $data = $request->validated();
-        $user = $this->otpService->findUserByContact($data);
+        $user = $this->authenticationService->findActiveUser($data);
 
-        if (!$user || !$user->is_active) {
+        if (!$user) {
             return $this->errorResponse('Utilisateur introuvable ou inactif', 404);
         }
 
         $channel = isset($data['phone_number']) ? 'sms' : 'mail';
         $this->otpService->sendOtp($user, $channel);
 
-        return $this->successResponse(['contact' => $data['phone_number'] ?? $data['email']], 'Code OTP envoyé.');
+        return $this->successResponse(
+            ['contact' => $data['phone_number'] ?? $data['email']],
+            'Code OTP envoyé.'
+        );
     }
 
     /**
@@ -181,37 +159,17 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $contact = $data['phone_number'] ?? $data['email'];
-        $user = $this->otpService->verifyOtp($contact, $data['code']);
+        $authResult = $this->authenticationService->authenticateWithOtp($contact, $data['code']);
 
-        if (!$user) {
+        if (!$authResult) {
             return $this->errorResponse('Code OTP invalide ou expiré', 422);
         }
 
-        if (!$user->is_active) {
-            return $this->errorResponse('Utilisateur introuvable ou inactif', 404);
-        }
-
-        $roles = $user->roles()->get();
-        if ($roles->isEmpty()) {
-            return $this->errorResponse('User has no roles assigned', 403);
-        }
-
-        if ($user->hasRole('client')) {
-            $roleName = 'client';
-        } elseif ($user->hasRole('seller')) {
-            $roleName = 'seller';
-        } else {
-            return $this->errorResponse('Unauthorized', 403);
-        }
-
-        $token = $user->createToken('auth_token', [$roleName])->plainTextToken;
-        $cookie = cookie('auth_token', $token, 1440, null, null, false, true);
-
         return $this->successResponse([
-            'user' => new UserResource($user),
-            'token' => $token,
-            'role' => $roleName,
-        ], 'Connexion par OTP réussie')->cookie($cookie);
+            'user' => new UserResource($authResult['user']),
+            'token' => $authResult['token'],
+            'role' => $authResult['role'],
+        ], 'Connexion par OTP réussie')->cookie($authResult['cookie']);
     }
 
     /**
@@ -230,26 +188,91 @@ class AuthController extends Controller
     public function createAdmin(RegisterRequest $request)
     {
         $validatedData = $request->validated();
+        $admin = $this->authenticationService->createAdmin($validatedData);
 
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-            'first_name' => $validatedData['first_name'],
-            'last_name' => $validatedData['last_name'],
-            'phone_number' => $validatedData['phone_number'],
-            'is_active' => true,
-        ]);
+        return $this->successResponse(new UserResource($admin), 'Admin created successfully', 201);
+    }
 
-        $role = Role::where('name', 'admin')->first();
-        UserRole::create([
-            'user_ref' => $user->ref,
-            'role_ref' => $role->ref,
-            'start_at' => now(),
-            'is_active' => true,
-        ]);
+    /**
+     * Register a new user (requires email verification)
+     *
+     * @group Authentication
+     * @unauthenticated
+     * @bodyParam name string required Full name. Example: John Doe
+     * @bodyParam first_name string First name. Example: John
+     * @bodyParam last_name string Last name. Example: Doe
+     * @bodyParam email string required Email address. Example: user@example.com
+     * @bodyParam phone_number string Phone number. Example: +1234567890
+     * @bodyParam password string required Password. Example: securepass123
+     * @response 201 {"success": true, "data": {"id": 1, "name": "John Doe", "email": "user@example.com"}, "message": "Registration successful. Check your email for verification code."}
+     * @response 422 {"success": false, "message": "Validation error"}
+     */
+    public function register(RegisterRequest $request)
+    {
+        $validatedData = $request->validated();
+        $user = $this->authenticationService->createUserWithEmailVerification($validatedData, 'client');
 
-        return $this->successResponse(new UserResource($user), "Admin created successfully", 201);
+        return $this->successResponse(
+            new UserResource($user),
+            'Registration successful. Check your email for verification code.',
+            201
+        );
+    }
+
+    /**
+     * Verify email during registration
+     *
+     * @group Authentication
+     * @unauthenticated
+     * @bodyParam email string required User email. Example: user@example.com
+     * @bodyParam code string required OTP verification code. Example: 123456
+     * @response 200 {"success": true, "data": {"user": {...}, "message": "Email verified successfully. You can now login."}
+     * @response 422 {"success": false, "message": "Code OTP invalide ou expiré"}
+     * @response 404 {"success": false, "message": "Utilisateur introuvable"}
+     */
+    public function verifyEmail(VerifyEmailRequest $request)
+    {
+        $data = $request->validated();
+        $user = $this->authenticationService->verifyEmailAndActivate($data['email'], $data['code']);
+
+        if (!$user) {
+            return $this->errorResponse('Code OTP invalide ou expiré', 422);
+        }
+
+        return $this->successResponse(
+            new UserResource($user),
+            'Email verified successfully. You can now login.'
+        );
+    }
+
+    /**
+     * Resend verification email
+     *
+     * @group Authentication
+     * @unauthenticated
+     * @bodyParam email string required User email. Example: user@example.com
+     * @response 200 {"success": true, "data": {"contact": "user@example.com"}, "message": "Verification code sent to email"}
+     * @response 404 {"success": false, "message": "Utilisateur introuvable ou compte déjà activé"}
+     */
+    public function resendVerificationEmail(RequestOtpRequest $request)
+    {
+        $data = $request->validated();
+        $user = $this->otpService->findUserByContact($data);
+
+        if (!$user) {
+            return $this->errorResponse('Utilisateur introuvable ou compte déjà activé', 404);
+        }
+
+        if ($user->is_active) {
+            return $this->errorResponse('Utilisateur introuvable ou compte déjà activé', 404);
+        }
+
+        $this->authenticationService->sendEmailVerificationOtp($user);
+
+        return $this->successResponse(
+            ['contact' => $data['email'] ?? $data['phone_number']],
+            'Verification code sent to email'
+        );
     }
 
     /**
@@ -262,7 +285,8 @@ class AuthController extends Controller
      */
     public function profile()
     {
-        $user = User::where('ref', Auth::user()->ref)->with('roles')->first();
+        $user = Auth::user()->load('roles');
+
         return $this->successResponse(new UserResource($user));
     }
 }

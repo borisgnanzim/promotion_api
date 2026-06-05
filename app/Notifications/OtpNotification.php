@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\VonageMessage;
 use Illuminate\Notifications\Notification;
 
 class OtpNotification extends Notification
@@ -17,7 +16,9 @@ class OtpNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return $this->channel === 'sms' ? ['vonage'] : ['mail'];
+        // Currently supporting mail channel only
+        // To add SMS support, install: composer require vonage/laravel-notification-channel
+        return ['mail'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -28,12 +29,6 @@ class OtpNotification extends Notification
             ->line('Voici votre code de connexion :')
             ->line("**{$this->otp}**")
             ->line('Ce code expire dans 10 minutes.')
-            ->line('Si vous n’avez pas demandé ce code, ignorez cet e-mail.');
-    }
-
-    public function toVonage(object $notifiable): VonageMessage
-    {
-        return (new VonageMessage())
-            ->content("Votre code OTP est {$this->otp}. Il expire dans 10 minutes.");
+            ->line('Si vous n\'avez pas demande ce code, ignorez cet e-mail.');
     }
 }
