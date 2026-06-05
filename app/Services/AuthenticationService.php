@@ -25,10 +25,13 @@ class AuthenticationService
     public function authenticateWithPassword(string $email, string $password): ?array
     {
         $user = User::where('email', $email)->first();
+        //dd('user:'. $user);
 
         if (!$user || !Hash::check($password, (string) $user->password)) {
             return null;
+           // dd('Invalid credentials');
         }
+        //dd('Authenticated user:'. $user .'password:'. $password);
 
         return $this->buildAuthenticationResponse($user);
     }
@@ -64,11 +67,13 @@ class AuthenticationService
         }
 
         $roles = $user->roles()->get();
+        // dd('roles:'. $roles);
         if ($roles->isEmpty()) {
             return null;
         }
 
         $tokenData = $this->tokenService->createToken($user);
+        // dd('tokenData:'. $tokenData);
 
         return [
             'user' => $user,

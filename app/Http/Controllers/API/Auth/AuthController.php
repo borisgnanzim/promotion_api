@@ -41,6 +41,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
+        
         $authResult = $this->authenticationService->authenticateWithPassword(
             $credentials['email'],
             $credentials['password']

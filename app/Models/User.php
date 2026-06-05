@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 #[Fillable(['ref','name', 'email', 'password', 'phone_number', 'is_active', 'store_ref'])]
 #[Hidden(['password', 'remember_token'])]
@@ -19,7 +20,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasUuids;
+    use HasFactory, Notifiable, HasUuids, HasApiTokens;
 
     /**
      * Get the attributes that should be cast.

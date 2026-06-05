@@ -19,6 +19,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -36,7 +37,10 @@ endpoints:
         headers: []
         description: ''
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -56,6 +60,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -85,7 +90,10 @@ endpoints:
         headers: []
         description: ''
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -105,6 +113,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -172,7 +181,7 @@ endpoints:
         name: start_at
         description: 'Must be a valid date.'
         required: true
-        example: '2026-06-02T14:42:13'
+        example: '2026-06-05T07:18:28'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -183,7 +192,7 @@ endpoints:
         name: end_at
         description: 'Must be a valid date. Must be a date after or equal to <code>start_at</code>.'
         required: true
-        example: '2052-06-25'
+        example: '2052-06-28'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -272,8 +281,8 @@ endpoints:
       pourcentage: 1
       discount: 42
       max_discount: 37
-      start_at: '2026-06-02T14:42:13'
-      end_at: '2052-06-25'
+      start_at: '2026-06-05T07:18:28'
+      end_at: '2052-06-28'
       store_ref: architecto
       is_active: true
       name: 'Summer Sale'
@@ -290,7 +299,10 @@ endpoints:
         headers: []
         description: ''
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -310,6 +322,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -389,7 +402,7 @@ endpoints:
         name: start_at
         description: 'Must be a valid date.'
         required: false
-        example: '2026-06-02T14:42:13'
+        example: '2026-06-05T07:18:28'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -400,7 +413,7 @@ endpoints:
         name: end_at
         description: 'Must be a valid date. Must be a date after or equal to <code>start_at</code>.'
         required: false
-        example: '2052-06-25'
+        example: '2052-06-28'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -456,8 +469,8 @@ endpoints:
       pourcentage: 1
       discount: 42
       max_discount: 37
-      start_at: '2026-06-02T14:42:13'
-      end_at: '2052-06-25'
+      start_at: '2026-06-05T07:18:28'
+      end_at: '2052-06-28'
       store_ref: architecto
       is_active: true
       name: 'Summer Sale Updated'
@@ -471,7 +484,10 @@ endpoints:
         headers: []
         description: ''
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -491,6 +507,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -520,7 +537,10 @@ endpoints:
         headers: []
         description: ''
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null

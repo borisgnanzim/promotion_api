@@ -17,6 +17,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -40,7 +41,10 @@ endpoints:
         headers: []
         description: ''
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -60,6 +64,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -83,7 +88,10 @@ endpoints:
         headers: []
         description: ''
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -153,6 +161,261 @@ endpoints:
         custom: []
         status: 404
         content: '{"success": false, "message": "Compte deleted"}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/auth/register
+    metadata:
+      custom: []
+      groupName: Authentication
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Register a new user (requires email verification)'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      name:
+        custom: []
+        name: name
+        description: 'Full name.'
+        required: true
+        example: 'John Doe'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'Email address.'
+        required: true
+        example: user@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: Password.
+        required: true
+        example: securepass123
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      first_name:
+        custom: []
+        name: first_name
+        description: 'First name.'
+        required: false
+        example: John
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      last_name:
+        custom: []
+        name: last_name
+        description: 'Last name.'
+        required: false
+        example: Doe
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      phone_number:
+        custom: []
+        name: phone_number
+        description: 'Phone number.'
+        required: false
+        example: '+1234567890'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      name: 'John Doe'
+      email: user@example.com
+      password: securepass123
+      first_name: John
+      last_name: Doe
+      phone_number: '+1234567890'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: '{"success": true, "data": {"id": 1, "name": "John Doe", "email": "user@example.com"}, "message": "Registration successful. Check your email for verification code."}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 422
+        content: '{"success": false, "message": "Validation error"}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/auth/verify-email
+    metadata:
+      custom: []
+      groupName: Authentication
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Verify email during registration'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      email:
+        custom: []
+        name: email
+        description: 'User email.'
+        required: true
+        example: user@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      code:
+        custom: []
+        name: code
+        description: 'OTP verification code.'
+        required: true
+        example: '123456'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      email: user@example.com
+      code: '123456'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{"success": true, "data": {"user": {...}, "message": "Email verified successfully. You can now login."}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: '{"success": false, "message": "Utilisateur introuvable"}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 422
+        content: '{"success": false, "message": "Code OTP invalide ou expiré"}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/auth/resend-verification-email
+    metadata:
+      custom: []
+      groupName: Authentication
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Resend verification email'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      email:
+        custom: []
+        name: email
+        description: 'User email.'
+        required: true
+        example: user@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      phone_number:
+        custom: []
+        name: phone_number
+        description: 'This field is required when <code>email</code> is not present. The <code>phone_number</code> of an existing record in the users table.'
+        required: false
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      email: user@example.com
+      phone_number: architecto
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{"success": true, "data": {"contact": "user@example.com"}, "message": "Verification code sent to email"}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: '{"success": false, "message": "Utilisateur introuvable ou compte déjà activé"}'
         headers: []
         description: ''
     responseFields: []

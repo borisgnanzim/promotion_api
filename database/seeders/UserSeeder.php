@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'name' => 'Administrateur',
             'email' => 'admin@example.com',
             'password' => bcrypt('password'),
+            'is_active' => true,
             
         ]);
 
@@ -38,6 +39,7 @@ class UserSeeder extends Seeder
             'email' => 'seller@example.com',
             'password' => bcrypt('password'),
             'store_ref' => Store::inRandomOrder()->first()->ref,
+            'is_active' => true,
         ]);
         $roleSeller = Role::where('name', 'seller')->first();  
         UserRole::create([
@@ -52,6 +54,7 @@ class UserSeeder extends Seeder
             'name' => 'candidat',
             'email' => 'candidat@example.com',
             'password' => bcrypt('password'),
+            'is_active' => true,
         ]);
         $roleCandidat = Role::where('name', 'candidat')->first();  
         UserRole::create([
@@ -66,6 +69,7 @@ class UserSeeder extends Seeder
             'name' => 'Client',
             'email' => 'client@example.com',
             'password' => bcrypt('password'),
+            'is_active' => true,
         ]);
 
         $roleClient = Role::where('name', 'client')->first();
