@@ -22,7 +22,8 @@ class StoreController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(StoreResource::collection(Store::all()));
+        $stores = Store::with('sellers')->get();
+        return $this->successResponse(StoreResource::collection($stores));
     }
 
     /**

@@ -40,4 +40,9 @@ class Item extends Model
         return $this->belongsTo(Category::class, 'category_ref', 'ref');
     }
 
+    public function promotion()
+    {
+        return $this->belongsTo(Promotion::class, 'promotion_ref', 'ref');
+    }
+
 }

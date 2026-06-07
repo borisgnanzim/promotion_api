@@ -22,7 +22,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(UserResource::collection(User::all()));
+        $users = User::with('roles','store')->get();
+        return $this->successResponse(UserResource::collection($users));
     }
 
     /**

@@ -14,15 +14,29 @@ class ItemController extends Controller
     use JsonResponseTrait;
 
     /**
-     * Display a listing of the resource.
+     * List all items
+     *
+     * @group Items
+     * @authenticated
+     * @response 200 {"success": true, "data": [{"id": 1, "ref": "item_123", "name": "Laptop", "description": "A powerful laptop", "price": 999.99, "category_ref": "cat_123"}], "message": null}
      */
+
     public function index()
     {
-        return $this->successResponse(ItemResource::collection(Item::all()));
+        return $this->successResponse(ItemResource::collection(Item::with('category', 'promotion', 'images')->get()));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create a new item
+     *
+     * @group Items
+     * @authenticated
+     * @bodyParam name string required The item name. Example: Laptop
+     * @bodyParam description string The item description. Example: A powerful laptop
+     * @bodyParam price number required The item price. Example: 999.99
+     * @bodyParam category_ref string required The category reference. Example: cat_123
+     * @response 201 {"success": true, "data": {"id": 1, "ref": "item_123", "name": "Laptop"}, "message": "Item created."}
+     * @response 422 {"success": false, "message": "Validation failed"}
      */
     public function store(StoreItemRequest $request)
     {
@@ -41,6 +55,15 @@ class ItemController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * 
+     * @group Items
+     * @authenticated
+     * @bodyParam name string The item name. Example: Laptop
+     * @bodyParam description string The item description. Example: A powerful laptop
+     * @bodyParam price number The item price. Example: 999.99
+     * @bodyParam category_ref string The category reference. Example: cat_123
+     * @response 200 {"success": true, "data": {"id": 1, "ref": "item_123", "name": "Laptop"}, "message": "Item updated."}
+     * @response 422 {"success": false, "message": "Validation failed"}
      */
     public function update(UpdateItemRequest $request, Item $item)
     {
@@ -51,6 +74,10 @@ class ItemController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @group Items
+     * @authenticated
+     * @response 200 {"success": true, "data": null, "message": "Item deleted."}    
      */
     public function destroy(Item $item)
     {

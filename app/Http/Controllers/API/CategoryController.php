@@ -22,7 +22,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(CategoryResource::collection(Category::all()));
+        return $this->successResponse(CategoryResource::collection(Category::with('items','parent', 'childrens')->get()));
     }
 
     /**

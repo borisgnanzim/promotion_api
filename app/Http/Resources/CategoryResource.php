@@ -20,8 +20,9 @@ class CategoryResource extends JsonResource
             'description' => $this->description,
             'parent_ref' => $this->parent_ref,
             'parent' => $this->whenLoaded('parent'),
-            'children' => $this->whenLoaded('children'),
+            'childrens' => $this->whenLoaded('childrens'),
             'items_count' => $this->whenCounted('items'),
+            //'items' => $this->whenLoaded('items'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

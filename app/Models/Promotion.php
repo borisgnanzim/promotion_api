@@ -29,5 +29,13 @@ class Promotion extends Model
             'is_active' => 'boolean',
         ];
     }
-    
+
+    public function items()
+    {
+        return $this->hasMany(Item::class, 'promotion_ref', 'ref');
+    }
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_ref', 'ref');
+    }
 }

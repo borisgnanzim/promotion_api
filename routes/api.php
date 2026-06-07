@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\Auth\AuthController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\ImageController;
+use App\Http\Controllers\API\ItemController;
 use App\Http\Controllers\API\PromotionController;
 use App\Http\Controllers\API\StoreController;
 use App\Http\Controllers\API\UserController;
@@ -75,5 +76,13 @@ Route::middleware(['auth:sanctum','ability:admin'])->prefix('admin')->group( fun
         Route::put('/{ref}', [StoreController::class,'update']);
         Route::delete('/{ref}', [StoreController::class,'destroy']);
        // Route::get('/{store_ref}/items',[StoreController::class, 'getItemsByStore']);
+    });
+
+    Route::prefix('items')->group(function(){
+        Route::get('/', [ItemController::class,'index']);
+        Route::get('/{ref}', [ItemController::class,'show']);
+        Route::post('/', [ItemController::class,'store']);
+        Route::put('/{ref}', [ItemController::class,'update']);
+        Route::delete('/{ref}', [ItemController::class,'destroy']);
     });
 });

@@ -16,7 +16,7 @@ class Store extends Model
     /** @use HasFactory<\Database\Factories\StoreFactory> */
     use HasFactory, HasUuids;
 
-    public function users()
+    public function sellers()
     {
         return $this->hasMany(User::class, 'store_ref', 'ref');
     }

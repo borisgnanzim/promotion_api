@@ -20,7 +20,7 @@ class StoreResource extends JsonResource
             'description' => $this->description,
             'address' => $this->address,
             'phone_number' => $this->phone_number,
-            'users' => $this->whenLoaded('users'),
+            'sellers' => $this->whenLoaded('sellers'),
             'users_count' => $this->whenCounted('users'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

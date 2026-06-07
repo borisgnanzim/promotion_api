@@ -170,7 +170,7 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -214,7 +214,7 @@ endpoints:
       email: user@example.com
       password: securepass123
       phone_number: '+212612345678'
-      is_active: false
+      is_active: true
       store_ref: architecto
       first_name: John
       last_name: Doe
@@ -319,7 +319,7 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -341,7 +341,7 @@ endpoints:
       email: zbailey@example.net
       password: '-0pBNvYgxw'
       phone_number: '+212612345678'
-      is_active: false
+      is_active: true
       store_ref: architecto
     fileParameters: []
     responses:

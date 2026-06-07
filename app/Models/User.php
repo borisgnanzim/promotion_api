@@ -38,7 +38,7 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'user_roles');
+        return $this->belongsToMany(Role::class, 'user_roles', 'user_ref', 'role_ref', 'ref', 'ref');
     }
 
     public function hasRole(string $roleName): bool
@@ -54,5 +54,10 @@ class User extends Authenticatable
     public function routeNotificationForNexmo(): ?string
     {
         return $this->phone_number;
+    }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_ref', 'ref');
     }
 }
