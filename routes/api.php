@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\ActivityLogController;
 use App\Http\Controllers\API\Auth\AuthController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\ImageController;
@@ -84,5 +85,13 @@ Route::middleware(['auth:sanctum','ability:admin'])->prefix('admin')->group( fun
         Route::post('/', [ItemController::class,'store']);
         Route::put('/{ref}', [ItemController::class,'update']);
         Route::delete('/{ref}', [ItemController::class,'destroy']);
+    });
+
+    Route::prefix('activity_logs')->group(function () {
+        Route::get('/', [ActivityLogController::class, 'index']);
+        Route::get('/{ref}', [ActivityLogController::class, 'show']);
+        Route::delete('/{ref}', [ActivityLogController::class, 'destroy']);
+        Route::delete('/delete_all', [ActivityLogController::class, 'clear']);
+        Route::get('/me/my_activity_logs', [ActivityLogController::class, 'getMyActivityLogs']);
     });
 });

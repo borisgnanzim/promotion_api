@@ -7,11 +7,12 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Traits\ActivityLogger;
 use App\Traits\JsonResponseTrait;
 
 class CategoryController extends Controller
 {
-    use JsonResponseTrait;
+    use JsonResponseTrait, ActivityLogger;
 
     /**
      * List all categories
@@ -22,7 +23,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(CategoryResource::collection(Category::with('items','parent', 'childrens')->get()));
+        //return $this->successResponse(CategoryResource::collection(Category::with('items','parent', 'childrens')->get()));
+        $categories = Category::whereNull('parent_ref')->with('items','parent', 'childrens')->get();
+        return $this->successResponse(CategoryResource::collection($categories));
     }
 
     /**
@@ -38,9 +41,24 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        $category = Category::create($request->validated());
+        $data = $request->validated();
+        if (isset($data['parent_ref'])) {
+            $parent = Category::where('ref', $data['parent_ref'])->first();
+            if (!$parent) {
+                return $this->errorResponse('Parent category not found', 404);
+            }
+        }
+        $category = Category::create($data);
+        $this->logActivity([
+            'action' => 'create',
+            'target_type' => 'category',
+            'target_ref' => $category->ref,
+            'user_ref' => auth()->user()->ref,
+            'description' => 'Created category '.$category->name,
+            'role' => auth()->user()->roles->first()->name ?? null,
+        ]);
+        return $this->successResponse(CategoryResource::make($category), 'Category created successfully', 201);
 
-        return $this->successResponse(new CategoryResource($category), 'Category created.', 201);
     }
 
     /**
