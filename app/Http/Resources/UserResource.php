@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             'is_active' => $this->is_active,
             'store_ref' => $this->store_ref,
             'email_verified_at' => $this->email_verified_at,
-            'roles' => $this->whenLoaded('roles'),
+            'roles' => RoleResource::collection($this->whenLoaded('roles')),
             'store' => $this->whenLoaded('store'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

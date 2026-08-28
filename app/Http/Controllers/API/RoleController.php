@@ -9,13 +9,27 @@ use App\Http\Resources\RoleResource;
 use App\Models\Role;
 use App\Traits\JsonResponseTrait;
 
+/**
+ * @group Roles
+ *
+ * @authenticated
+ */
 class RoleController extends Controller
 {
     use JsonResponseTrait;
 
+    /**
+     * List all roles
+     *
+     * @group Roles
+     *
+     * @authenticated
+     *
+     * @response 200 {"success": true, "data": [{"id": 1, "ref": "role_123", "name": "Admin"}], "message": null}
+     */
     public function index()
     {
-        return $this->successResponse(RoleResource::collection(Role::all()));
+        return $this->successResponse(RoleResource::collection(Role::withCount('users')->get()));
     }
 
     public function store(StoreRoleRequest $request)
